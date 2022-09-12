@@ -30,10 +30,17 @@ int main(int argc, char** argv) {
     local_n = n / p;
     local_a = a + my_rank * local_n * h;
     local_b = local_a + local_n * h;
+
+    // update local_n
+    if(my_rank == p - 1){
+        local_n += n %p;
+        printf("local_n: %d\n", local_n);
+    }
+    // always use updated local_n case if above
     integral = calculate(local_a, local_b, local_n, h);
+
     // MPI program original without reduce
     if (my_rank == 0) {
-        integral = calculate(local_a, local_b, local_n, h);
         total = integral;
         for (source = 1; source < p; source++) {
 
